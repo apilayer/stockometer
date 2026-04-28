@@ -1,65 +1,67 @@
-import Image from "next/image";
+import { fetchLatestEod, type EodRecord } from "@/lib/marketstack";
+import { TRACKED_SYMBOLS } from "@/lib/stocks";
+import { HeroCards } from "@/components/hero-cards";
+import { StocksTable } from "@/components/stocks-table";
+import { MarketsTabs } from "@/components/markets-tabs";
+import { MarketStatsBar } from "@/components/market-stats-bar";
+import { ErrorBanner } from "@/components/error-banner";
+import { LiveRefresh } from "@/components/live-refresh";
+import { MarketCharts } from "@/components/market-charts";
 
-export default function Home() {
+export const revalidate = 65;
+
+export default async function HomePage() {
+  let records: EodRecord[] = [];
+  let error: string | null = null;
+
+  try {
+    records = await fetchLatestEod(TRACKED_SYMBOLS);
+  } catch (e) {
+    error = e instanceof Error ? e.message : "Failed to load market data";
+  }
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="mx-auto max-w-[1400px] px-4 sm:px-6 py-8 space-y-8">
+      <div className="space-y-3">
+        <MarketsTabs />
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <MarketStatsBar records={records} />
+          <LiveRefresh intervalMs={65_000} />
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </div>
+
+      {error && <ErrorBanner message={error} />}
+
+      {!error && records.length > 0 && (
+        <>
+          <HeroCards rows={records} />
+
+          <section className="space-y-3">
+            <h2 className="text-xl font-semibold">Market Overview</h2>
+            <MarketCharts records={records} />
+          </section>
+
+          <section className="space-y-3">
+            <div>
+              <h2 className="text-xl font-semibold">
+                Top Stocks by 24h Volume
+              </h2>
+              <p className="text-sm text-(--color-text-muted) max-w-3xl">
+                A live view of the most popular tickers across major US
+                exchanges. End-of-day prices, intraday change, day range and
+                volume — refreshed every 6 hours.
+              </p>
+            </div>
+            <StocksTable records={records} />
+          </section>
+        </>
+      )}
+
+      {!error && records.length === 0 && (
+        <div className="rounded-xl border border-(--color-border) bg-(--color-surface) p-8 text-center text-(--color-text-muted)">
+          No data returned by Marketstack. Try again in a moment.
         </div>
-      </main>
+      )}
     </div>
   );
 }

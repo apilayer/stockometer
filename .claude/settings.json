@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s -o /tmp/home.html -w \"STATUS=%{http_code}\\\\nSIZE=%{size_download}\\\\n\" http://localhost:3000/)",
+      "Bash(grep -oE \"data-[a-z-]+|<title>[^<]+|stock/[A-Z]+|[A-Z]{2,5} Inc\" /tmp/home.html)",
+      "Bash(/usr/bin/grep -n \"apilayer-logo\" components/site-header.tsx app/layout.tsx)",
+      "Bash(/Users/favor/.nvm/versions/node/v20.10.0/bin/npx tsc *)",
+      "Bash(/usr/bin/curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3000/)",
+      "Bash(/usr/bin/tail -5 /tmp/stockometer-dev.log)",
+      "Bash(/usr/bin/grep -oE \"of [0-9]+ match|tabular[^>]*>[0-9]+<\" /tmp/scr.html)",
+      "Bash(/usr/bin/head -10)",
+      "Bash(/usr/bin/grep -oE \"[0-9]+ <\\\\!-- -->of <\\\\!-- -->[0-9]+|[0-9]+</span> *<span[^>]*>of <\\\\!-- -->[0-9]+|<span[^>]*tabular[^>]*>[0-9]+</span>[^<]*<span[^>]*>[^<]*of [0-9]+\" /tmp/scr.html)",
+      "Bash(/usr/bin/head -5)",
+      "Bash(/usr/bin/grep -n \"PriceChart\\\\|CandlestickChart\" app/stock/\\\\[symbol\\\\]/page.tsx)",
+      "Bash(/usr/bin/grep -n \"periodChange\" app/stock/\\\\[symbol\\\\]/page.tsx)",
+      "Bash(/usr/bin/head -40)",
+      "Bash(/bin/rm /Users/favor/Documents/workspace/personal/DevTools/stockometer/components/price-chart.tsx)"
+    ]
+  }
+}
