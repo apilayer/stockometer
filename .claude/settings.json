@@ -14,7 +14,8 @@
       "Bash(/usr/bin/grep -n \"PriceChart\\\\|CandlestickChart\" app/stock/\\\\[symbol\\\\]/page.tsx)",
       "Bash(/usr/bin/grep -n \"periodChange\" app/stock/\\\\[symbol\\\\]/page.tsx)",
       "Bash(/usr/bin/head -40)",
-      "Bash(/bin/rm /Users/favor/Documents/workspace/personal/DevTools/stockometer/components/price-chart.tsx)"
+      "Bash(/bin/rm /Users/favor/Documents/workspace/personal/DevTools/stockometer/components/price-chart.tsx)",
+      "Bash(/usr/bin/curl -s -o /dev/null -w \"%{http_code}\" --max-time 10 http://localhost:3000/movers/hot)"
     ]
   }
 }

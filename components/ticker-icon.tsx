@@ -23,18 +23,25 @@ function hash(str: string): number {
   return h;
 }
 
-function buildSources(domain: string): string[] {
+function buildSources(symbol: string, domain?: string): string[] {
   const token = process.env.NEXT_PUBLIC_LOGO_DEV_TOKEN;
   const sources: string[] = [];
-  if (token) {
+  if (domain) {
+    if (token) {
+      sources.push(
+        `https://img.logo.dev/${domain}?token=${token}&size=200&format=png&retina=true`,
+      );
+    }
     sources.push(
-      `https://img.logo.dev/${domain}?token=${token}&size=200&format=png&retina=true`,
+      `https://icons.duckduckgo.com/ip3/${domain}.ico`,
+      `https://www.google.com/s2/favicons?domain=${domain}&sz=128`,
+    );
+  } else if (token) {
+    // No curated domain (dynamic universe): let logo.dev resolve by ticker.
+    sources.push(
+      `https://img.logo.dev/ticker/${symbol}?token=${token}&size=200&format=png&retina=true`,
     );
   }
-  sources.push(
-    `https://icons.duckduckgo.com/ip3/${domain}.ico`,
-    `https://www.google.com/s2/favicons?domain=${domain}&sz=128`,
-  );
   return sources;
 }
 
@@ -54,25 +61,23 @@ export function TickerIcon({
     setSourceIdx(0);
   }, [resolvedDomain]);
 
-  if (resolvedDomain) {
-    const sources = buildSources(resolvedDomain);
-    if (sourceIdx < sources.length) {
-      return (
-        <div
-          className="grid shrink-0 place-items-center overflow-hidden rounded-full bg-white"
-          style={{ width: size, height: size }}
-        >
-          <Image
-            src={sources[sourceIdx]}
-            alt={`${symbol} logo`}
-            width={size}
-            height={size}
-            onError={() => setSourceIdx((i) => i + 1)}
-            className="h-full w-full rounded-full object-contain"
-          />
-        </div>
-      );
-    }
+  const sources = buildSources(symbol, resolvedDomain);
+  if (sourceIdx < sources.length) {
+    return (
+      <div
+        className="grid shrink-0 place-items-center overflow-hidden rounded-full bg-white"
+        style={{ width: size, height: size }}
+      >
+        <Image
+          src={sources[sourceIdx]}
+          alt={`${symbol} logo`}
+          width={size}
+          height={size}
+          onError={() => setSourceIdx((i) => i + 1)}
+          className="h-full w-full rounded-full object-contain"
+        />
+      </div>
+    );
   }
 
   const [bg, fg] = PALETTE[hash(symbol) % PALETTE.length];

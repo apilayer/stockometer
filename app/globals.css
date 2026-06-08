@@ -114,20 +114,3 @@ select:not(:disabled) {
 .marquee-track:hover {
   animation-play-state: paused;
 }
-/* Hide FusionCharts trial watermark */
-[id*="creditgroup"],
-[class*="creditgroup"] {
-  display: none !important;
-  visibility: hidden !important;
-}
-a[href*="fusioncharts.com"] {
-  display: none !important;
-  visibility: hidden !important;
-  pointer-events: none !important;
-}
-span[id*="watermark"],
-div[id*="watermark"] {
-  display: none !important;
-  visibility: hidden !important;
-}
-

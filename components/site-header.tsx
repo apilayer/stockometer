@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { TickerSearch } from "@/components/ticker-search";
+import { Logo } from "@/components/logo";
 
 const NAV: { label: string; href: string; matches: (p: string) => boolean }[] = [
   {
@@ -94,7 +95,10 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-30 border-b border-(--color-border) bg-(--color-bg)/85 backdrop-blur">
       <div className="mx-auto flex h-14 max-w-[1400px] items-center gap-6 px-4 sm:px-6">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5">
+          <Link href="/" aria-label="StockoMeter home" className="text-(--color-text)">
+            <Logo size={30} />
+          </Link>
           <div className="flex flex-col leading-none">
             <Link
               href="/"
@@ -200,12 +204,12 @@ export function SiteHeader() {
         <div className="ml-auto flex items-center gap-2">
           <TickerSearch />
           <a
-            href="https://apilayer.com/marketplace/marketstack-api"
+            href="https://marketstack.com"
             target="_blank"
             rel="noopener noreferrer"
             className="hidden rounded-md border border-(--color-border) px-3 py-1.5 text-sm text-(--color-text) transition-colors hover:border-(--color-brand) hover:text-(--color-brand) sm:inline-block"
           >
-            Get API Key
+            Get Marketstack API Key
           </a>
         </div>
       </div>

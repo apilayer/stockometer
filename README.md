@@ -1,6 +1,6 @@
 # StockoMeter
 
-A developer-grade dashboard for live stock prices, gainers, volume, and EOD history across 40,000+ tickers. Built on top of APILayer's [Marketstack API](https://marketstack.com/).
+Track live stock prices, top gainers and losers, trading volume, and price history across thousands of tickers — all in one clean, fast dashboard. Powered by APILayer's [Marketstack API](https://marketstack.com/).
 
 ## 🚀 Features
 
@@ -19,7 +19,7 @@ A developer-grade dashboard for live stock prices, gainers, volume, and EOD hist
 - **Language:** TypeScript
 - **Styling:** Tailwind CSS v4
 - **State Management:** Zustand (for Watchlist, Alerts, and Portfolio)
-- **Charts:** FusionCharts (via next/dynamic for optimal performance)
+- **Charts:** Custom in-house SVG charts — interactive candlesticks with zoom/pan, no third-party charting library
 - **Icons:** Lucide React
 - **Data Provider:** Marketstack API
 - **Logos:** Logo.dev API

@@ -39,8 +39,19 @@ function calcMA(closes: number[], period: number): (number | null)[] {
   return out;
 }
 
-export function CandlestickChart({ history }: { history: EodRecord[] }) {
-  const data = useMemo(
+export function CandlestickChart({
+  history,
+  visibleCount,
+}: {
+  history: EodRecord[];
+  /**
+   * How many of the most recent sessions to actually display. The rest are
+   * still fetched/sorted so the moving averages (esp. MA-99) have enough
+   * look-back to render a full line across the visible window.
+   */
+  visibleCount?: number;
+}) {
+  const sortedAll = useMemo(
     () =>
       [...history].sort(
         (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
@@ -48,10 +59,26 @@ export function CandlestickChart({ history }: { history: EodRecord[] }) {
     [history],
   );
 
-  const closes = useMemo(() => data.map((d) => d.close), [data]);
+  const closesAll = useMemo(() => sortedAll.map((d) => d.close), [sortedAll]);
+  const masAll = useMemo(
+    () =>
+      MA_CONFIGS.map((cfg) => ({
+        ...cfg,
+        values: calcMA(closesAll, cfg.period),
+      })),
+    [closesAll],
+  );
+
+  // MAs are computed over the full series, then both candles and MA values are
+  // sliced to the same visible window so their indices stay aligned.
+  const start =
+    visibleCount && visibleCount < sortedAll.length
+      ? sortedAll.length - visibleCount
+      : 0;
+  const data = useMemo(() => sortedAll.slice(start), [sortedAll, start]);
   const mas = useMemo(
-    () => MA_CONFIGS.map((cfg) => ({ ...cfg, values: calcMA(closes, cfg.period) })),
-    [closes],
+    () => masAll.map((m) => ({ ...m, values: m.values.slice(start) })),
+    [masAll, start],
   );
 
   const priceVals = data.flatMap((d) => [d.high, d.low]);

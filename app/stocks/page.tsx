@@ -1,11 +1,12 @@
-import { fetchLatestEod, type EodRecord } from "@/lib/marketstack";
-import { TRACKED_SYMBOLS } from "@/lib/stocks";
+import { fetchTopStocks, type EodRecord } from "@/lib/marketstack";
 import { MarketStatsBar } from "@/components/market-stats-bar";
 import { ErrorBanner } from "@/components/error-banner";
 import { StocksTable } from "@/components/stocks-table";
 import { LiveRefresh } from "@/components/live-refresh";
 
 export const revalidate = 65;
+
+const BROWSE_SIZE = Number(process.env.STOCKOMETER_STOCKS_PAGE_SIZE ?? 250);
 
 export const metadata = {
   title: "Stocks — StockoMeter",
@@ -15,7 +16,7 @@ export default async function StocksPage() {
   let records: EodRecord[] = [];
   let error: string | null = null;
   try {
-    records = await fetchLatestEod(TRACKED_SYMBOLS);
+    records = await fetchTopStocks(BROWSE_SIZE);
   } catch (e) {
     error = e instanceof Error ? e.message : "Failed to load market data";
   }
@@ -28,8 +29,9 @@ export default async function StocksPage() {
           <LiveRefresh intervalMs={65_000} />
         </div>
         <p className="text-sm text-(--color-text-muted) max-w-3xl">
-          Browse every ticker StockoMeter tracks. Filter by sector or sort any
-          column. Click any ticker for the 90-day chart and EOD history.
+          Browse the {records.length} most actively-traded US stocks, updated
+          live. Filter by sector or sort any column, and tap any stock to see
+          its price chart and history.
         </p>
         <MarketStatsBar records={records} />
       </header>

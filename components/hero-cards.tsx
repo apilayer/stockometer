@@ -5,6 +5,7 @@ import { TickerIcon } from "@/components/ticker-icon";
 
 type Card = {
   title: string;
+  href: string;
   rows: EodRecord[];
 };
 
@@ -35,10 +36,14 @@ export function HeroCards({ rows }: { rows: EodRecord[] }) {
     .map((x) => x.rec);
 
   const cards: Card[] = [
-    { title: "Hot", rows: hot.length ? hot : rows.slice(0, 3) },
-    { title: "Active", rows: active },
-    { title: "Top Gainer", rows: gainers },
-    { title: "Top Volume", rows: topVolume },
+    {
+      title: "Hot",
+      href: "/movers/hot",
+      rows: hot.length ? hot : rows.slice(0, 3),
+    },
+    { title: "Active", href: "/movers/active", rows: active },
+    { title: "Top Gainer", href: "/movers/gainers", rows: gainers },
+    { title: "Top Volume", href: "/movers/volume", rows: topVolume },
   ];
 
   return (
@@ -56,7 +61,7 @@ function CardBlock({ card }: { card: Card }) {
       <div className="mb-2 flex items-center justify-between text-sm">
         <span className="text-(--color-text-muted)">{card.title}</span>
         <Link
-          href="/"
+          href={card.href}
           className="text-(--color-text-muted) transition-colors hover:text-(--color-brand)"
         >
           More ›

@@ -19,7 +19,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "StockoMeter — Live Stock Markets",
   description:
-    "A developer-grade dashboard for live stock prices, gainers, volume and EOD history across 40,000+ tickers. Built on APILayer's Marketstack API.",
+    "Track live stock prices, top gainers and losers, trading volume and price history across thousands of tickers — all in one clean, fast dashboard. Powered by Marketstack.",
 };
 
 export default function RootLayout({
@@ -38,7 +38,7 @@ export default function RootLayout({
         </Suspense>
         <SiteHeader />
         <main className="flex-1">{children}</main>
-        <footer className="border-t border-(--color-border) py-6">
+        <footer className="border-t border-(--color-border) pt-6 pb-20">
           <div className="mx-auto flex max-w-[1400px] flex-col items-center gap-3 px-4 text-xs text-(--color-text-dim) sm:flex-row sm:justify-between">
             <div className="flex flex-wrap items-center gap-2">
               <span>StockoMeter — built on</span>

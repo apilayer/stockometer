@@ -12,8 +12,8 @@ import { STOCKS_BY_SYMBOL, TRACKED_SYMBOLS } from "@/lib/stocks";
 import { TickerIcon } from "@/components/ticker-icon";
 import dynamic from "next/dynamic";
 
-const CandlestickChart = dynamic(
-  () => import("@/components/candlestick-chart").then((mod) => mod.CandlestickChart)
+const PriceChart = dynamic(
+  () => import("@/components/price-chart").then((mod) => mod.PriceChart),
 );
 import { WatchlistToggle } from "@/components/watchlist-toggle";
 import { EodHistoryTable } from "@/components/eod-history-table";
@@ -35,7 +35,8 @@ export default async function StockPage({
   let history: Awaited<ReturnType<typeof fetchEodHistory>> = [];
   let error: string | null = null;
   try {
-    history = await fetchEodHistory(symbol, 90);
+    // Fetch extra look-back so the 99-day MA can render across the visible 90.
+    history = await fetchEodHistory(symbol, 190);
   } catch (e) {
     error = e instanceof Error ? e.message : "Failed to load price history";
   }
@@ -50,23 +51,27 @@ export default async function StockPage({
 
   if (!error && history.length === 0) notFound();
 
-  const latest = history[0];
-  const prev = history[1];
+  // `history` holds extra look-back for the chart's MAs; all page-level stats
+  // and tables stay scoped to the most recent 90 sessions (DESC order).
+  const recent = history.slice(0, 90);
+
+  const latest = recent[0];
+  const prev = recent[1];
   const dayChange = latest ? changePercent(latest.open, latest.close) : 0;
   const periodChange =
-    latest && history.length > 1
-      ? changePercent(history[history.length - 1].close, latest.close)
+    latest && recent.length > 1
+      ? changePercent(recent[recent.length - 1].close, latest.close)
       : 0;
   const dayOverDay = latest && prev ? changePercent(prev.close, latest.close) : 0;
   const positive = dayChange >= 0;
 
-  const periodHigh = history.length
-    ? Math.max(...history.map((r) => r.high))
+  const periodHigh = recent.length
+    ? Math.max(...recent.map((r) => r.high))
     : 0;
-  const periodLow = history.length ? Math.min(...history.map((r) => r.low)) : 0;
+  const periodLow = recent.length ? Math.min(...recent.map((r) => r.low)) : 0;
   const avgVolume =
-    history.length > 0
-      ? history.reduce((s, r) => s + r.volume, 0) / history.length
+    recent.length > 0
+      ? recent.reduce((s, r) => s + r.volume, 0) / recent.length
       : 0;
 
   return (
@@ -172,20 +177,20 @@ export default async function StockPage({
           {history.length > 1 && (
             <section className="space-y-3">
               <div className="flex items-end justify-between">
-                <h2 className="text-lg font-semibold">Price chart · last 90 days</h2>
+                <h2 className="text-lg font-semibold">Price chart</h2>
                 <span className="text-xs text-(--color-text-muted)">
-                  {history.length} sessions
+                  Scroll to zoom · drag to pan · {history.length} sessions
                 </span>
               </div>
-              <CandlestickChart history={history} />
+              <PriceChart history={history} visibleBars={90} />
             </section>
           )}
 
           <BrokerSection symbol={symbol} />
 
           <section className="space-y-3">
-            <h2 className="text-lg font-semibold">End-of-day history</h2>
-            <EodHistoryTable history={history} />
+            <h2 className="text-lg font-semibold">Price history</h2>
+            <EodHistoryTable history={recent} />
           </section>
         </div>
 

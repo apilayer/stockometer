@@ -21,7 +21,7 @@ type Row = EodRecord & { change: number; sector?: Sector };
 
 type SortKey = "volume" | "change" | "price" | "name";
 
-const FILTERS: ("All" | Sector)[] = ["All", ...SECTORS];
+const FILTERS: ("All" | Sector)[] = [...SECTORS, "All"];
 
 export function StocksTable({ records }: { records: EodRecord[] }) {
   const [filter, setFilter] = useState<"All" | Sector>("All");
